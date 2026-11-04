@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import logging
 import time
-from typing import Self
 
 import cv2
 import numpy as np
@@ -96,7 +95,7 @@ class CameraReader:
         self._is_opened = False
         logger.info("Camera released.")
 
-    def __enter__(self) -> Self:
+    def __enter__(self) -> CameraReader:  # noqa: PYI034
         self.open()
         return self
 

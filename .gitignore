@@ -38,6 +38,11 @@ frames/
 .DS_Store
 Thumbs.db
 
+# PyInstaller build artifacts (avoids GitHub 100MB file limit)
+build/
+dist/
+*.spec
+
 # Generated figures during evaluation (optional ignore, keep report templates)
 report/figures/*.png
 
