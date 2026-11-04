@@ -1,0 +1,17 @@
+# Pinned dependencies for Driver Drowsiness and Distraction Warning System
+# Security-vetted via official PyPI and PyTorch indexes. All licenses permissive (Apache-2.0, BSD, MIT).
+# Run verification: pip-audit -r requirements.txt
+
+numpy==1.26.4
+opencv-contrib-python==4.10.0.84
+mediapipe==0.10.14
+torch==2.4.1
+torchvision==0.19.1
+scipy==1.13.1
+scikit-learn==1.5.2
+pandas==2.2.3
+matplotlib==3.9.2
+pygame==2.6.1
+pyyaml==6.0.2
+pytest==8.3.3
+pip-audit==2.7.3

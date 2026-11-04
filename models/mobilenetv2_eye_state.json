@@ -1,0 +1,18 @@
+{
+  "architecture": "MobileNetV2",
+  "input_dimensions": [
+    3,
+    128,
+    128
+  ],
+  "classes": [
+    "closed",
+    "open"
+  ],
+  "weights_sha256": "ea5fa308b24b42b1d9b9acdc92d1befd0f2f15b7290a2d4414eaa88ff8ae03c3",
+  "training_date": "2026-11-04T18:20:40.406835+00:00",
+  "dataset_version": "v1.0-subject-split",
+  "best_val_loss": 0.6953,
+  "best_val_accuracy": 0.5,
+  "total_epochs": 2
+}

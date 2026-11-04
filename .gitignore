@@ -1,0 +1,43 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Project data and logs (strictly air-gapped & privacy preserved)
+data/
+logs/
+*.csv
+
+# Model weights (only commit metadata JSONs, weights are generated or downloaded)
+models/*.pt
+models/*.pth
+models/*.bin
+models/*.onnx
+
+# Saved frames debug directory
+saved_frames/
+frames/
+
+# IDE and OS artifacts
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Generated figures during evaluation (optional ignore, keep report templates)
+report/figures/*.png
+

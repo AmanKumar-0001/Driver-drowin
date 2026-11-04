@@ -1,0 +1,118 @@
+# Default Configuration for Driver Drowsiness and Distraction Warning System
+# Final-Year B.Tech / AIML Research Prototype
+# Every threshold and timing duration is documented with its physiological and operational rationale.
+
+camera:
+  # Device index of the capture camera (0 is typically the integrated laptop webcam)
+  camera_index: 0
+  # Video capture resolution width in pixels (640x480 standard research target)
+  frame_width: 640
+  # Video capture resolution height in pixels
+  frame_height: 480
+  # Target capture frames per second
+  target_fps: 30
+  # Duration in seconds of continuous capture failure before entering hardware FAULT state
+  disconnect_timeout_sec: 3.0
+  # Consecutive unreadable frames tolerated before issuing a frame-drop warning
+  max_consecutive_dropped_frames: 5
+
+landmarks:
+  # Maximum faces to detect (strictly 1 to isolate the driver and ignore passengers)
+  max_num_faces: 1
+  # Enable refined iris landmarks (468 base mesh + 10 iris contour landmarks)
+  refine_landmarks: true
+  # Minimum confidence threshold for face detection model [0.0, 1.0]
+  min_detection_confidence: 0.5
+  # Minimum confidence threshold for landmark tracking model [0.0, 1.0]
+  min_tracking_confidence: 0.5
+
+drowsiness:
+  # Nominal baseline threshold for Eye Aspect Ratio (EAR); calibrated individually at startup
+  ear_threshold: 0.21
+  # Threshold for Mouth Aspect Ratio (MAR); values above this indicate an open mouth / yawn
+  mar_threshold: 0.60
+  # Minimum continuous duration in seconds of MAR > mar_threshold to classify as a yawn
+  yawn_min_duration_sec: 1.0
+  # Sliding window duration in seconds over which PERCLOS (percentage eye closure) is calculated
+  perclos_window_sec: 60.0
+  # Proportion of eye closure time [0.0, 1.0] within the sliding window that triggers DROWSY state
+  perclos_threshold: 0.35
+  # Maximum duration in seconds for an involuntary physiological blink (ignored by alarm)
+  blink_max_duration_sec: 0.40
+  # Closures exceeding this duration in seconds are categorized as dangerous microsleep incidents
+  microsleep_min_duration_sec: 1.0
+  # Temporal debounce duration in seconds; eyes must remain closed continuously before DROWSY triggers
+  drowsiness_debounce_sec: 1.5
+  # Required duration in seconds of nominal attentive behavior to transition back to ALERT state
+  recovery_debounce_sec: 0.5
+
+distraction:
+  # Absolute head yaw angle in degrees beyond which driver is flagged as looking away
+  yaw_threshold_deg: 30.0
+  # Minimum head pitch angle in degrees (negative = looking down, e.g., phone or lap)
+  pitch_min_deg: -20.0
+  # Maximum head pitch angle in degrees (positive = looking up, e.g., rearview mirror)
+  pitch_max_deg: 20.0
+  # Temporal debounce duration in seconds; head must remain outside boundary before DISTRACTED triggers
+  distraction_debounce_sec: 2.0
+  # Time in seconds with no detected face landmarks before entering the NO_FACE distraction/fault state
+  no_face_debounce_sec: 3.0
+
+model:
+  # Toggle activation of the MobileNetV2 deep learning classifier for eye-state verification
+  cnn_enabled: true
+  # Relative path to serialized PyTorch model checkpoint (.pt state_dict)
+  model_path: "models/mobilenetv2_eye_state.pt"
+  # Relative path to companion model metadata JSON descriptor
+  model_metadata_path: "models/mobilenetv2_eye_state.json"
+  # Input image dimensions (channels, height, width) for MobileNetV2
+  input_size: [128, 128]
+  # Frequency interval (run CNN every N frames, cache prediction between) to preserve CPU FPS budget
+  cnn_inference_interval: 2
+  # Fusion decision weight for rule-based EAR [0.0, 1.0]
+  ear_weight: 0.50
+  # Fusion decision weight for CNN eye state probability [0.0, 1.0]
+  cnn_weight: 0.50
+  # Weighted ensemble decision threshold; combined probability > threshold classifies eye as closed
+  fusion_threshold: 0.50
+
+alarm:
+  # Audio backend driver: 'auto' (prefers pygame, falls back to winsound on Windows), 'pygame', or 'winsound'
+  audio_backend: "auto"
+  # Minimum cooldown period in seconds between repeating alarm activations to avoid auditory fatigue
+  alarm_cooldown_sec: 5.0
+  # Capped audio volume ratio [0.0, 1.0] to safeguard driver hearing
+  volume_cap: 0.70
+  # Maximum duration in seconds of continuous sounding before an automatic 5-second silence pause
+  max_continuous_alarm_sec: 10.0
+  # Frequency in Hz for advisory WARNING tone (soft pleasant chime)
+  warning_frequency_hz: 440
+  # Frequency in Hz for critical DROWSY buzzer (urgent high-frequency alert)
+  drowsy_frequency_hz: 800
+  # Frequency in Hz for DISTRACTED alert (intermittent attention tone)
+  distracted_frequency_hz: 600
+  # Frequency in Hz for NO_FACE or hardware fault alarm (continuous high-priority buzzer)
+  fault_frequency_hz: 1000
+
+calibration:
+  # Duration in seconds of initial open-eye baseline acquisition
+  calibration_duration_sec: 10.0
+  # Multiplier applied to median open-eye EAR to establish personalized operational EAR threshold
+  ear_multiplier: 0.75
+  # Runtime destination path for persisted calibration parameters
+  calibration_output_path: "config/calibration.json"
+  # Physiological lower sanity boundary for calculated open-eye baseline EAR
+  min_valid_baseline_ear: 0.20
+  # Physiological upper sanity boundary for calculated open-eye baseline EAR
+  max_valid_baseline_ear: 0.45
+
+logging:
+  # Directory where timestamped session metric CSV files are stored
+  log_dir: "logs"
+  # Privacy control: strictly disable raw frame recording by default (true enables anonymized eye crops only)
+  save_frames: false
+  # Directory where opt-in anonymized debug crops are stored
+  debug_frames_dir: "saved_frames"
+  # Graphical user interface enabled (set to false for headless benchmarking via --no-display)
+  show_display: true
+
